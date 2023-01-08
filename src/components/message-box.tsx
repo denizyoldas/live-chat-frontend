@@ -1,47 +1,57 @@
-import React from "react";
-import { format } from "date-fns";
-import cx from "classnames";
+import { format } from 'date-fns'
+import cx from 'classnames'
+// import UserAvatar from "./user-avatar";
 
 interface Props {
-  message: string;
-  timestamp: number;
-  user?: any;
-  isSender?: boolean;
+  message: string
+  timestamp: number
+  user?: any
+  isSender?: boolean
 }
 
 export default function MessageBox({
   message,
   timestamp,
   isSender = false,
-  user,
+  user
 }: Props) {
+  console.log(user)
+
   return (
     <div
-      className={cx("flex gap-4 items-end mb-8", {
-        "flex-row-reverse": isSender,
+      className={cx('mb-8 flex items-end gap-4', {
+        'flex-row-reverse': isSender
       })}
     >
-      <div className="w-14 h-14 rounded-full bg-white">
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white">
         <img
-          src={"https://i.pravatar.cc/300?key=" + user?.id || "user id"}
+          src={`/avatars/${user?.avatar}`}
           alt="user"
-          className="w-full h-full rounded-full"
+          className={cx('h-12 w-12 rounded-full', {
+            'scale-x-[-1] transform': !isSender
+          })}
         />
+        {/* <UserAvatar type={user?.avatar || "blue"} /> */}
       </div>
       <div
         className={cx(
-          "rounded-t-2xl bg-white min-w-[212px] px-6 py-2 max-w-xs",
+          'min-w-[212px] max-w-xs rounded-t-2xl bg-white px-6 py-2',
           {
-            "rounded-bl-2xl": isSender,
-            "rounded-br-2xl": !isSender,
+            'rounded-bl-2xl': isSender,
+            'rounded-br-2xl': !isSender
           }
         )}
       >
-        <p className="mb-2 font-bold break-words">{message}</p>
-        <span className="text-slate-400 flex justify-end text-xs">
-          {format(timestamp, "HH:mm")}
+        {!isSender && (
+          <h4 className="font-slate-400 mb-2 text-xs underline">
+            {user?.name}
+          </h4>
+        )}
+        <p className="mb-2 break-words font-bold">{message}</p>
+        <span className="flex justify-end text-xs text-slate-400">
+          {format(timestamp, 'HH:mm')}
         </span>
       </div>
     </div>
-  );
+  )
 }

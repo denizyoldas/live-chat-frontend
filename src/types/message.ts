@@ -1,6 +1,12 @@
 export interface Message {
   message: string;
-  sender: string;
+  sender: MessageSender;
   receiver?: string;
   timestamp: number;
+}
+
+export interface MessageSender {
+  id: string;
+  name: string;
+  avatar: string;
 }
