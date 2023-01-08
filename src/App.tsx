@@ -4,7 +4,7 @@ import MessageBox from "./components/message-box";
 import { Message } from "./types/message";
 
 // const socket = io("http://localhost:3000");
-const socket = io("http://socket.denizaksu.dev");
+const socket = io("https://socket.denizaksu.dev");
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
