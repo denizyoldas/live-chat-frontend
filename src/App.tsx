@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 import Messages from './components/messages'
 import Modal from './components/modal'
+import useLocalStorage from './lib/use-local'
 import { Message } from './types/message'
 
 // const socket = io("http://localhost:2000");
@@ -11,10 +12,15 @@ function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [messages, setMessages] = useState<Message[]>([])
   const [message, setMessage] = useState('')
-  const [user, setUser] = useState({ id: '', name: '', avatar: '' })
-  const [isModalOpen, setIsModalOpen] = useState(true)
+  const [user, setUser] = useLocalStorage('user', {
+    id: '',
+    name: '',
+    avatar: ''
+  })
+  const [isModalOpen, setIsModalOpen] = useState(!user.id)
 
   useEffect(() => {
+    console.log(user)
     socket.on('connect', () => {
       setIsConnected(true)
     })
@@ -30,6 +36,7 @@ function App() {
     return () => {
       socket.off('connect')
       socket.off('disconnect')
+      socket.off('msg')
     }
   }, [])
 
@@ -46,15 +53,12 @@ function App() {
   const modalSaveHandle = (data: any) => {
     setUser(data)
     setIsModalOpen(false)
-    console.log(data)
   }
 
   return (
     <>
       <div className="flex h-screen flex-col items-center gap-3 py-10 px-8 md:px-0">
-        <h1 className="text-2xl font-bold">
-          <span className="text-primary">Live Chat</span>
-        </h1>
+        <h1 className="text-2xl font-bold text-primary">Live Chat</h1>
         <Messages messages={messages} user={user} />
         <div className="flex w-full flex-col justify-between gap-4 rounded-lg py-3 md:w-[730px] md:flex-row md:bg-[#D9D9D9] md:px-5">
           <input

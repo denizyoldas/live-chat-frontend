@@ -14,14 +14,17 @@ export default function Modal({ isOpen, onClose }: Props) {
     null
   )
   const [name, setName] = React.useState('')
+  const [errorMessage, setErrorMessage] = React.useState('')
 
   const saveHandle = () => {
-    if (onClose) {
+    if (onClose && name && selectedAvatar) {
       onClose({
         name,
         id: nanoid(),
         avatar: selectedAvatar
       })
+    } else {
+      setErrorMessage('Please select name and avatar')
     }
   }
 
@@ -37,36 +40,42 @@ export default function Modal({ isOpen, onClose }: Props) {
         <h1 className="text-2xl font-bold">
           Welcome to <span className="text-primary">Live Chat</span>
         </h1>
-        <div>
-          Select Avatar
-          <div className="mt-2 flex gap-2">
-            {AVATARS.map(avatar => (
-              <img
-                key={avatar}
-                className={cx('h-10 w-10 rounded-full', {
-                  'ring-4 ring-blue-700': selectedAvatar === avatar
-                })}
-                src={`/avatars/${avatar}`}
-                onClick={() => selectAvatar(avatar)}
-              ></img>
-            ))}
+        <div className="pt-6">
+          <div className="mb-4">
+            Select Avatar
+            <div className="mt-2 flex gap-2">
+              {AVATARS.map(avatar => (
+                <img
+                  key={avatar}
+                  className={cx('h-10 w-10 rounded-full', {
+                    'ring-4 ring-blue-700': selectedAvatar === avatar
+                  })}
+                  src={`/avatars/${avatar}`}
+                  onClick={() => selectAvatar(avatar)}
+                ></img>
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col">
-          <label htmlFor="name">
-            <span>Name</span>
-          </label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Name"
-            className="w-full appearance-none rounded-lg border-none px-3 py-2 ring-2 ring-gray-300"
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
+          <div className="flex flex-col gap-2">
+            <label htmlFor="name">
+              <span>Name</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Name"
+              className="w-full appearance-none rounded-lg border-none px-3 py-2 ring-2 ring-gray-300"
+              value={name}
+              onChange={e => setName(e.target.value)}
+            />
+          </div>
+
+          {errorMessage && (
+            <div className="mt-2 text-sm text-red-500">{errorMessage}</div>
+          )}
         </div>
         <button
-          className="mt-4 rounded-md bg-primary px-4 py-2 text-white"
+          className="mt-4 w-full rounded-md bg-primary px-4 py-2 text-white"
           onClick={saveHandle}
         >
           Join

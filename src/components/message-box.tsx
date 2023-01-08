@@ -15,8 +15,6 @@ export default function MessageBox({
   isSender = false,
   user
 }: Props) {
-  console.log(user)
-
   return (
     <div
       className={cx('mb-8 flex items-end gap-4', {
