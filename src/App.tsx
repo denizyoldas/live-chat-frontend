@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 import Messages from './components/messages'
 import Modal from './components/modal'
+import Settings from './components/settings'
+// import UserList from './components/user-list'
 import useLocalStorage from './lib/use-local'
 import { Message } from './types/message'
 
-// const socket = io("http://localhost:2000");
+// const socket = io('http://localhost:2000')
 const socket = io('https://socket.denizaksu.dev')
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [messages, setMessages] = useState<Message[]>([])
+  const [users, setUsers] = useState<any[]>([])
   const [message, setMessage] = useState('')
   const [user, setUser] = useLocalStorage('user', {
     id: '',
@@ -19,24 +22,55 @@ function App() {
   })
   const [isModalOpen, setIsModalOpen] = useState(!user.id)
 
+  const fetchChatData = async () => {
+    const res = await fetch('https://socket.denizaksu.dev/chat')
+    // const res = await fetch('http://localhost:2000/chat')
+    const data = await res.json()
+    setMessages(data)
+  }
+
   useEffect(() => {
-    console.log(user)
+    fetchChatData()
+
     socket.on('connect', () => {
       setIsConnected(true)
+
+      socket.emit('join', {
+        userId: user.id,
+        userName: user.name,
+        userAvatar: user.avatar
+      })
+
+      // socket.auth = { token: user.id }
     })
 
     socket.on('disconnect', () => {
       setIsConnected(false)
+
+      socket.emit('leave', {
+        userId: user.id
+      })
     })
 
     socket.on('msg', (data: Message) => {
       setMessages(prev => [...prev, data])
     })
 
+    socket.on('join', (data: any) => {
+      setUsers(prev => [...prev, data])
+    })
+
+    socket.on('leave', (data: any) => {
+      console.log('leave', data)
+      setUsers(prev => prev.filter(user => user.id !== data))
+    })
+
     return () => {
       socket.off('connect')
       socket.off('disconnect')
       socket.off('msg')
+      socket.off('join')
+      socket.off('leave')
     }
   }, [])
 
@@ -57,7 +91,8 @@ function App() {
 
   return (
     <>
-      <div className="flex h-screen flex-col items-center gap-3 py-10 px-8 md:px-0">
+      {/* <UserList users={users} /> */}
+      <div className="flex h-screen flex-col items-center gap-3 py-10 px-8 dark:bg-slate-800 md:px-0">
         <h1 className="text-2xl font-bold text-primary">Live Chat</h1>
         <Messages messages={messages} user={user} />
         <div className="flex w-full flex-col justify-between gap-4 rounded-lg py-3 md:w-[730px] md:flex-row md:bg-[#D9D9D9] md:px-5">
@@ -88,6 +123,8 @@ function App() {
           modalSaveHandle(data)
         }}
       />
+
+      <Settings />
     </>
   )
 }
