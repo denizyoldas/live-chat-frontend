@@ -7,7 +7,7 @@ import UserList from './components/user-list'
 import useLocalStorage from './lib/use-local'
 import { Message } from './types/message'
 
-const socket = io(import.meta.env.VITE_API_URL)
+const socket = io('https://socket.denizaksu.dev')
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
@@ -22,7 +22,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(!user.id)
 
   const fetchChatData = async () => {
-    const res = await fetch(import.meta.env.VITE_API_URL + '/api/chat')
+    const res = await fetch('https://socket.denizaksu.dev/api/chat')
     const data = await res.json()
     setMessages(data)
   }
