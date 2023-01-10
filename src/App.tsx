@@ -3,12 +3,11 @@ import io from 'socket.io-client'
 import Messages from './components/messages'
 import Modal from './components/modal'
 import Settings from './components/settings'
-// import UserList from './components/user-list'
+import UserList from './components/user-list'
 import useLocalStorage from './lib/use-local'
 import { Message } from './types/message'
 
-// const socket = io('http://localhost:2000')
-const socket = io('https://socket.denizaksu.dev')
+const socket = io(import.meta.env.VITE_API_URL)
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
@@ -23,13 +22,16 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(!user.id)
 
   const fetchChatData = async () => {
-    const res = await fetch('https://socket.denizaksu.dev/chat')
-    // const res = await fetch('http://localhost:2000/chat')
+    const res = await fetch(import.meta.env.VITE_API_URL + '/api/chat')
     const data = await res.json()
     setMessages(data)
   }
 
   useEffect(() => {
+    if (!user.id) {
+      return
+    }
+
     fetchChatData()
 
     socket.on('connect', () => {
@@ -40,39 +42,28 @@ function App() {
         userName: user.name,
         userAvatar: user.avatar
       })
-
-      // socket.auth = { token: user.id }
     })
 
     socket.on('disconnect', () => {
       setIsConnected(false)
-
-      socket.emit('leave', {
-        userId: user.id
-      })
     })
 
     socket.on('msg', (data: Message) => {
       setMessages(prev => [...prev, data])
     })
 
-    socket.on('join', (data: any) => {
-      setUsers(prev => [...prev, data])
-    })
-
-    socket.on('leave', (data: any) => {
-      console.log('leave', data)
-      setUsers(prev => prev.filter(user => user.id !== data))
+    socket.on('users', (data: any) => {
+      console.log(data)
+      setUsers(data)
     })
 
     return () => {
       socket.off('connect')
       socket.off('disconnect')
       socket.off('msg')
-      socket.off('join')
-      socket.off('leave')
+      socket.off('users')
     }
-  }, [])
+  }, [user.id])
 
   const sendMessage = () => {
     socket.emit('msg', {
@@ -91,7 +82,7 @@ function App() {
 
   return (
     <>
-      {/* <UserList users={users} /> */}
+      <UserList users={users} />
       <div className="flex h-screen flex-col items-center gap-3 py-10 px-8 dark:bg-slate-800 md:px-0">
         <h1 className="text-2xl font-bold text-primary">Live Chat</h1>
         <Messages messages={messages} user={user} />

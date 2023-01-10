@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import useLocalStorage from '../lib/use-local'
+import { FaSun, FaMoon } from 'react-icons/fa'
 
 export default function ToggleTheme() {
   const [theme, setTheme] = useLocalStorage('theme', 'light')
@@ -14,6 +15,12 @@ export default function ToggleTheme() {
   }, [theme])
 
   return (
-    <button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</button>
+    <button onClick={toggleTheme}>
+      {theme === 'light' ? (
+        <FaMoon className="text-blue-300" />
+      ) : (
+        <FaSun className="text-yellow-300" />
+      )}
+    </button>
   )
 }
