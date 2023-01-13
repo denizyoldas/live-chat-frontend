@@ -1,28 +1,28 @@
+import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
+import { ToastContainer } from 'react-toastify'
 import io from 'socket.io-client'
 import Messages from './components/messages'
 import Modal from './components/modal'
 import Settings from './components/settings'
 import UserList from './components/user-list'
-import useLocalStorage from './lib/use-local'
+import { modalIsOpenAtom, userAtom } from './store/app.atom'
 import { Message } from './types/message'
+import 'react-toastify/dist/ReactToastify.css'
+import Button from './components/button'
 
-const socket = io('https://socket.denizaksu.dev')
+const socket = io('http://localhost:2000/')
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [messages, setMessages] = useState<Message[]>([])
   const [users, setUsers] = useState<any[]>([])
   const [message, setMessage] = useState('')
-  const [user, setUser] = useLocalStorage('user', {
-    id: '',
-    name: '',
-    avatar: ''
-  })
-  const [isModalOpen, setIsModalOpen] = useState(!user.id)
+  const [, setModalIsOpen] = useAtom(modalIsOpenAtom)
+  const [user] = useAtom(userAtom)
 
   const fetchChatData = async () => {
-    const res = await fetch('https://socket.denizaksu.dev/api/chat')
+    const res = await fetch('http://localhost:2000/api/chat')
     const data = await res.json()
     setMessages(data)
   }
@@ -30,6 +30,8 @@ function App() {
   useEffect(() => {
     if (!user.id) {
       return
+    } else {
+      setModalIsOpen(false)
     }
 
     fetchChatData()
@@ -53,7 +55,6 @@ function App() {
     })
 
     socket.on('users', (data: any) => {
-      console.log(data)
       setUsers(data)
     })
 
@@ -63,7 +64,7 @@ function App() {
       socket.off('msg')
       socket.off('users')
     }
-  }, [user.id])
+  }, [user])
 
   const sendMessage = () => {
     socket.emit('msg', {
@@ -75,17 +76,14 @@ function App() {
     setMessage('')
   }
 
-  const modalSaveHandle = (data: any) => {
-    setUser(data)
-    setIsModalOpen(false)
-  }
-
   return (
     <>
       <UserList users={users} />
       <div className="flex h-screen flex-col items-center gap-3 py-10 px-8 dark:bg-slate-800 md:px-0">
         <h1 className="text-2xl font-bold text-primary">Live Chat</h1>
+
         <Messages messages={messages} user={user} />
+
         <div className="flex w-full flex-col justify-between gap-4 rounded-lg py-3 md:w-[730px] md:flex-row md:bg-[#D9D9D9] md:px-5">
           <input
             type="text"
@@ -99,23 +97,15 @@ function App() {
               }
             }}
           />
-          <button
-            className="rounded-lg bg-primary py-2 px-20 font-bold text-white"
-            onClick={sendMessage}
-          >
+          <Button className="!py-2 !px-20" onClick={sendMessage}>
             Send
-          </button>
+          </Button>
         </div>
       </div>
 
-      <Modal
-        isOpen={isModalOpen}
-        onClose={(data: any) => {
-          modalSaveHandle(data)
-        }}
-      />
-
+      <Modal />
       <Settings />
+      <ToastContainer position="bottom-right" autoClose={5000} />
     </>
   )
 }
