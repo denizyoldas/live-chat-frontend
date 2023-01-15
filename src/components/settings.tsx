@@ -1,16 +1,13 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import ToggleTheme from './toggle-theme'
 import { AiFillSetting, AiOutlineLogout } from 'react-icons/ai'
 import cx from 'classnames'
-import useLocalStorage from '../lib/use-local'
+import { useAtom } from 'jotai'
+import { userAtom } from '../store/app.atom'
 
 export default function Settings() {
   const [visible, setVisible] = useState(false)
-  const [, setUser] = useLocalStorage('user', {
-    id: '',
-    name: '',
-    avatar: ''
-  })
+  const [, setUser] = useAtom(userAtom)
 
   const logOut = () => {
     setUser({

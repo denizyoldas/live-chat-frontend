@@ -1,14 +1,19 @@
-import React, { useEffect } from 'react'
+import { useAtom } from 'jotai'
+import React, { useEffect, useState } from 'react'
+import { getChathistory } from '../services/app.service'
+import { activeChatIdAtom } from '../store/app.atom'
 import { Message } from '../types/message'
 import MessageBox from './message-box'
 
 interface Props {
-  messages: Message[]
+  newMessages?: Message[]
   user: any
 }
 
-export default function Messages({ messages, user }: Props) {
+export default function Messages({ user, newMessages }: Props) {
   const messageDivRef = React.useRef<HTMLDivElement>(null)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [activeChatId] = useAtom(activeChatIdAtom)
 
   useEffect(() => {
     messageDivRef?.current?.scrollIntoView({
@@ -17,8 +22,22 @@ export default function Messages({ messages, user }: Props) {
     })
   }, [messages])
 
+  useEffect(() => {
+    if (newMessages) {
+      setMessages(prev => [...prev, ...newMessages])
+    }
+  }, [newMessages])
+
+  useEffect(() => {
+    if (activeChatId) {
+      getChathistory(activeChatId).then(res => {
+        setMessages(res)
+      })
+    }
+  }, [activeChatId])
+
   return (
-    <div className="h-[560px] w-full rounded-xl bg-[#D9D9D9] md:w-[730px]">
+    <div className="h-[560px] w-full rounded-xl bg-secondary">
       <div className="messages h-full overflow-y-auto p-5">
         {messages.map((msg, i) => (
           <MessageBox
@@ -27,7 +46,7 @@ export default function Messages({ messages, user }: Props) {
             timestamp={msg.timestamp}
             isSender={msg.sender.id === user.id}
             user={{
-              id: msg.sender,
+              id: msg.sender.id,
               name: msg.sender.name,
               avatar: msg.sender.avatar
             }}
