@@ -11,7 +11,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import Button from './components/button'
 import ChatingUserList from './components/chating-user-list'
 
-const socket = io('http://localhost:2000/')
+// const socket = io('http://localhost:2000/')
+const socket = io('https://socket.denizaksu.dev/')
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
