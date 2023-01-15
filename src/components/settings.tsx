@@ -1,12 +1,8 @@
-import { useState } from 'react'
-import ToggleTheme from './toggle-theme'
-import { AiFillSetting, AiOutlineLogout } from 'react-icons/ai'
-import cx from 'classnames'
 import { useAtom } from 'jotai'
 import { userAtom } from '../store/app.atom'
+import ToggleTheme from './toggle-theme'
 
 export default function Settings() {
-  const [visible, setVisible] = useState(false)
   const [, setUser] = useAtom(userAtom)
 
   const logOut = () => {
@@ -20,16 +16,20 @@ export default function Settings() {
   }
 
   return (
-    <div className="absolute top-10 right-10">
-      <button onClick={() => setVisible(!visible)}>
-        <AiFillSetting className="text-2xl text-black dark:text-white" />
-      </button>
-      <div className={cx('absolute top-10', { hidden: !visible })}>
+    <>
+      <h1 className="text-2xl font-bold">Settings</h1>
+      <div className="mt-4 flex items-center gap-3">
+        Change Theme
         <ToggleTheme />
-        <button className="mt-4 flex items-center gap-2" onClick={logOut}>
-          <AiOutlineLogout size={20} className="text-red-500" />
+      </div>
+      <div className="mt-4">
+        <button
+          className="mt-4 flex items-center gap-2 font-semibold text-red-600"
+          onClick={logOut}
+        >
+          LogOut
         </button>
       </div>
-    </div>
+    </>
   )
 }

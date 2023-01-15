@@ -2,8 +2,8 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 
 const API = axios.create({
-  // baseURL: 'http://localhost:2000'
-  baseURL: 'https://socket.denizaksu.dev'
+  baseURL: 'http://localhost:2000'
+  // baseURL: 'https://socket.denizaksu.dev'
 })
 
 export async function registerUser(data: any) {

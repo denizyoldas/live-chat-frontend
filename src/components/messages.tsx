@@ -37,7 +37,7 @@ export default function Messages({ user, newMessages }: Props) {
   }, [activeChatId])
 
   return (
-    <div className="h-[560px] w-full rounded-xl bg-secondary">
+    <div className="h-full w-full rounded-xl bg-secondary">
       <div className="messages h-full overflow-y-auto p-5">
         {messages.map((msg, i) => (
           <MessageBox

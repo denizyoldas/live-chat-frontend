@@ -9,3 +9,4 @@ export const userAtom = atomWithStorage('user', {
 })
 export const activeChatIdAtom = atom<string | null>(null)
 export const modalContentAtom = atom<string | null>('login')
+export const themeAtom = atomWithStorage('theme', 'light')

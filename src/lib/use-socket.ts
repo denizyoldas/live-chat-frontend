@@ -14,5 +14,22 @@ export const useSocket = (url: string) => {
     }
   }, [url])
 
+  useEffect(() => {
+    if (socket) {
+      setIsConnected(socket.connected)
+    }
+  }, [socket])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('connect', () => {
+        setIsConnected(true)
+      })
+      socket.on('disconnect', () => {
+        setIsConnected(false)
+      })
+    }
+  }, [socket])
+
   return socket
 }
