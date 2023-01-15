@@ -6,7 +6,7 @@ import { Message } from '../types/message'
 import MessageBox from './message-box'
 
 interface Props {
-  newMessages?: Message[]
+  newMessages?: Message | null
   user: any
 }
 
@@ -24,7 +24,7 @@ export default function Messages({ user, newMessages }: Props) {
 
   useEffect(() => {
     if (newMessages) {
-      setMessages(prev => [...prev, ...newMessages])
+      setMessages(prev => [...prev, newMessages])
     }
   }, [newMessages])
 

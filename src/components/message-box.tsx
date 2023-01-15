@@ -8,22 +8,12 @@ interface Props {
   isSender?: boolean
 }
 
-const RANDOM_USERNAME_COLORS = [
-  'text-green-500',
-  'text-blue-500',
-  'text-red-500',
-  'text-yellow-500',
-  'text-purple-500'
-]
-
 export default function MessageBox({
   message,
   timestamp,
   isSender = false,
   user
 }: Props) {
-  const color = RANDOM_USERNAME_COLORS[Math.floor(Math.random() * 5)]
-
   return (
     <div
       className={cx('mb-8 flex items-end gap-4', {
@@ -34,9 +24,7 @@ export default function MessageBox({
         <img
           src={`/avatars/${user?.avatar}`}
           alt="user"
-          className={cx('h-12 w-12 rounded-full', {
-            'scale-x-[-1] transform': !isSender
-          })}
+          className="h-12 w-12 rounded-full"
         />
       </div>
       <div

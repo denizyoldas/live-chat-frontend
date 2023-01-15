@@ -7,5 +7,5 @@ export const userAtom = atomWithStorage('user', {
   name: '',
   avatar: ''
 })
-
 export const activeChatIdAtom = atom<string | null>(null)
+export const modalContentAtom = atom<string | null>('login')

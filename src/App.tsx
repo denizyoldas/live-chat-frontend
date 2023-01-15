@@ -19,7 +19,7 @@ function App() {
   const [message, setMessage] = useState('')
   const [, setModalIsOpen] = useAtom(modalIsOpenAtom)
   const [user] = useAtom(userAtom)
-  const [newMessage, setNewMessage] = useState<Message[]>([])
+  const [newMessage, setNewMessage] = useState<Message | null>(null)
   const [activeChatId] = useAtom(activeChatIdAtom)
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function App() {
     })
 
     socket.on('msg', (data: Message) => {
-      setNewMessage(prev => [...prev, data])
+      setNewMessage(data)
     })
 
     socket.on('users', (data: any) => {

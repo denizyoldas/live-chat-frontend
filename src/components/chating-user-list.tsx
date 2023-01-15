@@ -2,7 +2,12 @@ import cx from 'classnames'
 import { useAtom } from 'jotai'
 import { useEffect, useState } from 'react'
 import { getConversations } from '../services/app.service'
-import { activeChatIdAtom, userAtom } from '../store/app.atom'
+import {
+  activeChatIdAtom,
+  modalContentAtom,
+  modalIsOpenAtom,
+  userAtom
+} from '../store/app.atom'
 
 const LIST = [
   {
@@ -35,27 +40,39 @@ export default function ChatingUserList() {
   const [activeChat, setActiveChat] = useAtom(activeChatIdAtom)
   const [conversations, setConversations] = useState<any[]>([])
   const [user] = useAtom(userAtom)
+  const [, setModalContent] = useAtom(modalContentAtom)
+  const [, setModalOpen] = useAtom(modalIsOpenAtom)
 
   const handleChatClick = (id: string) => {
     setActiveChat(id)
   }
 
+  const fetchConversations = async () => {
+    const res = await getConversations(user.id)
+    console.log(res)
+
+    setConversations(res)
+  }
+
   useEffect(() => {
-    const fetchConversations = async () => {
-      const res = await getConversations(user.id)
-      console.log(res)
-
-      setConversations(res)
-    }
-
     fetchConversations()
-  }, [])
+  }, [user.id])
+
+  const createNewChat = async () => {
+    setModalContent('new-chat')
+    setModalOpen(true)
+  }
 
   return (
     <div className="w-2/6 rounded-lg bg-secondary px-2 py-4">
       <div className="mb-4 flex items-center justify-between">
         <span>Chats</span>
-        <button className="text-primary hover:underline">New</button>
+        <button
+          className="text-primary hover:underline"
+          onClick={createNewChat}
+        >
+          New
+        </button>
       </div>
 
       <div className="grid grid-cols-1">
@@ -73,7 +90,7 @@ export default function ChatingUserList() {
             <div className="flex items-center">
               <div className="mr-4 flex h-10 w-10 items-center justify-center rounded-full bg-white">
                 <img
-                  src={`/avatars/${user?.avatar}`}
+                  src={`/avatars/${item?.avatar}`}
                   alt="user"
                   className="h-10 w-10 rounded-full"
                 />

@@ -58,8 +58,27 @@ export async function getChathistory(chatId: string) {
 }
 
 export async function getConversations(userId: string) {
+  if (!userId) return []
   try {
     const res = await API.get(`/api/chat/conversations/${userId}`)
+
+    return res.data
+  } catch (error: any) {
+    if (error.response.data.message.length) {
+      toaster(error.response.data.message[0], 'error')
+      return
+    }
+
+    toaster('Error', 'error')
+    return
+  }
+}
+
+export async function createNewConversation(username: string, userId: string) {
+  try {
+    const res = await API.post('/api/chat', { username, userId })
+
+    toaster('Conversation created successfully', 'success')
 
     return res.data
   } catch (error: any) {

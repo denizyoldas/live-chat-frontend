@@ -18,9 +18,8 @@ export default function RegisterForm({
   const { register, handleSubmit } = useForm()
 
   const onSubmit = async (data: any) => {
+    data.avatar = selectedAvatar
     const res = await registerUser(data)
-
-    console.log(res)
 
     onSave && onSave(data)
   }
