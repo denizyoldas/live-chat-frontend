@@ -18,8 +18,8 @@ import Button from './components/button'
 import ChatingUserList from './components/chating-user-list'
 import { BsPlus } from 'react-icons/bs'
 
-const socket = io('http://localhost:2000/')
-// const socket = io('https://socket.denizaksu.dev/')
+// const socket = io('http://localhost:2000/')
+const socket = io('https://socket.denizaksu.dev/')
 
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected)
